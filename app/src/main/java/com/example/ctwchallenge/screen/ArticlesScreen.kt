@@ -1,4 +1,4 @@
-package com.example.ctwchallenge.widgets
+package com.example.ctwchallenge.screen
 
 import android.annotation.SuppressLint
 import android.graphics.BitmapFactory

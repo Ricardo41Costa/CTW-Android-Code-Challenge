@@ -2,13 +2,11 @@
 
 package com.example.ctwchallenge.activity
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -26,12 +24,11 @@ import com.example.ctwchallenge.R
 import com.example.ctwchallenge.state.ArticleViewModel
 import com.example.ctwchallenge.state.UiState
 import com.example.ctwchallenge.ui.theme.CTWChallengeTheme
-import com.example.ctwchallenge.widgets.ArticlesScreen
-import com.example.ctwchallenge.widgets.ErrorScreen
-import com.example.ctwchallenge.widgets.LoadingScreen
+import com.example.ctwchallenge.screen.ArticlesScreen
+import com.example.ctwchallenge.screen.ErrorScreen
+import com.example.ctwchallenge.screen.LoadingScreen
 
 class MainActivity : ComponentActivity() {
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -40,20 +37,20 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     topBar = { AppBar(scrollBehavior = scrollBehavior) }
-                ) {
+                ) { innerPadding ->
                     Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
-                    ) {
-                        val viewModel: ArticleViewModel by viewModels { ArticleViewModel.Factory }
+                            modifier = Modifier.padding(innerPadding),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            val viewModel: ArticleViewModel by viewModels { ArticleViewModel.Factory }
 
-                        when(viewModel.uiState) {
-                            is UiState.Loading -> LoadingScreen(Modifier)
-                            is UiState.Success -> ArticlesScreen((viewModel.uiState as UiState.Success).articles, Modifier)
-                            else -> ErrorScreen(Modifier)
+                            when(viewModel.uiState) {
+                                is UiState.Loading -> LoadingScreen(Modifier)
+                                is UiState.Success -> ArticlesScreen((viewModel.uiState as UiState.Success).articles, Modifier)
+                                else -> ErrorScreen(Modifier)
+                            }
                         }
                     }
-                }
             }
         }
     }
