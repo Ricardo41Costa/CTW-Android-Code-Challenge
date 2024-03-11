@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">CTW Challenge</string>
+    <string name="api_token">de9a248152ad401d9ca660f01c4b2dc2</string>
+    <string name="bbc_source">bbc-news</string>
+    <string name="abc_source">abc-news</string>
+</resources>
