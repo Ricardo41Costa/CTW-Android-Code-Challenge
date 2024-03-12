@@ -3,7 +3,11 @@
 package com.example.ctwchallenge.widgets
 
 import android.content.Context
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -15,7 +19,12 @@ import androidx.compose.ui.res.stringResource
 import com.example.ctwchallenge.R
 
 @Composable
-fun AppBar(context : Context, scrollBehavior: TopAppBarScrollBehavior, modifier: Modifier = Modifier) {
+fun AppBar(
+    context : Context,
+    canNavigateBack : Boolean,
+    goBack: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior,
+    modifier: Modifier = Modifier) {
 
     val title = if (context.packageName.contains("bbc")) {
         stringResource(R.string.bbc_title)
@@ -35,6 +44,17 @@ fun AppBar(context : Context, scrollBehavior: TopAppBarScrollBehavior, modifier:
                 color = Color.White,
             )
         },
-        modifier = modifier
+        modifier = modifier,
+        navigationIcon = {
+            if (canNavigateBack) {
+                IconButton(onClick = goBack) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        tint = Color.White,
+                        contentDescription = "Go Back"
+                    )
+                }
+            }
+        }
     )
 }

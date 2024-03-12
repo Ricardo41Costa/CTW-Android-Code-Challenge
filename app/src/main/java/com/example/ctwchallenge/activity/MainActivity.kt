@@ -38,21 +38,21 @@ class MainActivity : ComponentActivity() {
                 val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
                 Scaffold(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-                    topBar = { AppBar(this, scrollBehavior = scrollBehavior) }
+                    topBar = { AppBar(this, false, {}, scrollBehavior = scrollBehavior) }
                 ) { innerPadding ->
                     Surface(
                             modifier = Modifier.padding(innerPadding),
                             color = MaterialTheme.colorScheme.background
-                        ) {
-                            val viewModel: ArticleViewModel by viewModels { ArticleViewModel.Factory }
+                    ) {
+                        val viewModel: ArticleViewModel by viewModels { ArticleViewModel.Factory }
 
-                            when(viewModel.uiState) {
-                                is UiState.Loading -> LoadingScreen(Modifier)
-                                is UiState.Success -> HomeScreen(this, (viewModel.uiState as UiState.Success).articles, Modifier)
-                                else -> ErrorScreen(Modifier)
-                            }
+                        when(viewModel.uiState) {
+                            is UiState.Loading -> LoadingScreen(Modifier)
+                            is UiState.Success -> HomeScreen(this, (viewModel.uiState as UiState.Success).articles, Modifier)
+                            else -> ErrorScreen(Modifier)
                         }
                     }
+                }
             }
         }
     }

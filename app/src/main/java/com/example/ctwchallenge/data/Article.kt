@@ -1,6 +1,6 @@
 package com.example.ctwchallenge.data
 
-import android.net.Uri
+import android.os.Bundle
 
 data class Article(
     val author: String,
