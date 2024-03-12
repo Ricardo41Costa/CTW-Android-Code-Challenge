@@ -21,16 +21,16 @@ sealed interface UiState {
     object Loading : UiState
 }
 
-class ArticleViewModel(token: String, source: String) : ViewModel() {
+class ArticleViewModel : ViewModel() {
     // This can be state flow
     var uiState: UiState by mutableStateOf(UiState.Loading)
-        private set
+        internal set
 
     init {
-        getArticles(token, source)
+        //getArticles(token, source)
     }
 
-    companion object {
+    /*companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(
@@ -51,10 +51,9 @@ class ArticleViewModel(token: String, source: String) : ViewModel() {
                 ) as T
             }
         }
-    }
+    }*/
 
-
-    private fun getArticles(token: String, source: String) {
+    fun getArticles(token: String, source: String) {
         viewModelScope.launch {
             uiState = UiState.Loading
             uiState = try {

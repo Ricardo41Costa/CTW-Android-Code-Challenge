@@ -2,25 +2,24 @@
 
 package com.example.ctwchallenge.activity
 
-import android.content.Context
+import android.content.DialogInterface
+import android.hardware.biometrics.BiometricPrompt
 import android.os.Bundle
+import android.os.CancellationSignal
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.biometric.BiometricManager
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat
 import com.example.ctwchallenge.R
 import com.example.ctwchallenge.state.ArticleViewModel
 import com.example.ctwchallenge.state.UiState
@@ -33,6 +32,45 @@ import com.example.ctwchallenge.widgets.AppBar
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val viewModel = ArticleViewModel()
+
+        val source = if (packageName.contains("bbc")) {
+            getString(R.string.bbc_source)
+        } else {
+            getString(R.string.abc_source)
+        }
+
+        val biometricManager = BiometricManager.from(this)
+        if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS) {
+            val executor = ContextCompat.getMainExecutor(this)
+            val dialog = BiometricPrompt.Builder(this)
+                .setTitle("Biometric Authentication")
+                .setDescription("Please authenticate with your biometrics to continue")
+                .setNegativeButton("Skip", executor) { dialog, _ ->
+                    viewModel.getArticles(getString(R.string.api_token), source)
+                }
+                .build()
+
+            dialog.authenticate(CancellationSignal(), executor, object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                }
+
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    viewModel.getArticles(getString(R.string.api_token), source)
+                }
+
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+                    viewModel.uiState = UiState.Error
+                }
+            })
+        } else {
+            viewModel.getArticles(getString(R.string.api_token), source)
+        }
+
         setContent {
             CTWChallengeTheme {
                 val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -44,8 +82,6 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.padding(innerPadding),
                             color = MaterialTheme.colorScheme.background
                     ) {
-                        val viewModel: ArticleViewModel by viewModels { ArticleViewModel.Factory }
-
                         when(viewModel.uiState) {
                             is UiState.Loading -> LoadingScreen(Modifier)
                             is UiState.Success -> HomeScreen(this, (viewModel.uiState as UiState.Success).articles, Modifier)
