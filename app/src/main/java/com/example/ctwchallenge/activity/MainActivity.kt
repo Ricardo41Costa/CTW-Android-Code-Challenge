@@ -1,7 +1,8 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn( ExperimentalMaterial3Api::class)
 
 package com.example.ctwchallenge.activity
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,9 +25,10 @@ import com.example.ctwchallenge.R
 import com.example.ctwchallenge.state.ArticleViewModel
 import com.example.ctwchallenge.state.UiState
 import com.example.ctwchallenge.ui.theme.CTWChallengeTheme
-import com.example.ctwchallenge.screen.ArticlesScreen
 import com.example.ctwchallenge.screen.ErrorScreen
+import com.example.ctwchallenge.screen.HomeScreen
 import com.example.ctwchallenge.screen.LoadingScreen
+import com.example.ctwchallenge.widgets.AppBar
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +38,7 @@ class MainActivity : ComponentActivity() {
                 val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
                 Scaffold(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-                    topBar = { AppBar(scrollBehavior = scrollBehavior) }
+                    topBar = { AppBar(this, scrollBehavior = scrollBehavior) }
                 ) { innerPadding ->
                     Surface(
                             modifier = Modifier.padding(innerPadding),
@@ -46,7 +48,7 @@ class MainActivity : ComponentActivity() {
 
                             when(viewModel.uiState) {
                                 is UiState.Loading -> LoadingScreen(Modifier)
-                                is UiState.Success -> ArticlesScreen((viewModel.uiState as UiState.Success).articles, Modifier)
+                                is UiState.Success -> HomeScreen(this, (viewModel.uiState as UiState.Success).articles, Modifier)
                                 else -> ErrorScreen(Modifier)
                             }
                         }
@@ -54,22 +56,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
-
-@Composable
-fun AppBar(scrollBehavior: TopAppBarScrollBehavior, modifier: Modifier = Modifier) {
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color(red = 127, green = 0, blue = 30),
-            titleContentColor = Color(red = 127, green = 0, blue = 30),
-        ),
-        scrollBehavior = scrollBehavior,
-        title = {
-            Text(
-                text = stringResource(R.string.app_name),
-                color = Color.White,
-            )
-        },
-        modifier = modifier
-    )
 }

@@ -15,8 +15,6 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.awaitResponse
 import java.io.IOException
-import java.net.URL
-
 sealed interface UiState {
     data class Success(val articles: ArrayList<Article>) : UiState
     object Error : UiState
@@ -33,7 +31,6 @@ class ArticleViewModel(token: String, source: String) : ViewModel() {
     }
 
     companion object {
-
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(
@@ -42,9 +39,15 @@ class ArticleViewModel(token: String, source: String) : ViewModel() {
             ): T {
                 val application = checkNotNull(extras[APPLICATION_KEY])
 
+                val source = if (application.packageName.contains("bbc")) {
+                    application.getString(R.string.bbc_source)
+                } else {
+                    application.getString(R.string.abc_source)
+                }
+
                 return ArticleViewModel(
                     application.getString(R.string.api_token),
-                    application.getString(R.string.bbc_source)
+                    source
                 ) as T
             }
         }
@@ -59,6 +62,14 @@ class ArticleViewModel(token: String, source: String) : ViewModel() {
                 val response = call.awaitResponse()
                 val responseBody = response.body()
                 val articles = responseBody!!.articles
+
+                /*for (article in articles) {
+                    if (article.urlToImage != null) {
+                        val url = URL("https://www.example.com/image.png")
+                        val imageData = url.readBytes()
+
+                    }
+                }*/
 
                 UiState.Success(
                     articles
