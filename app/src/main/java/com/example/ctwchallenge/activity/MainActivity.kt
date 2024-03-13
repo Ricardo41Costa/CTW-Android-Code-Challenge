@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
                 .setTitle("Biometric Authentication")
                 .setDescription("Please authenticate with your biometrics to continue")
                 .setNegativeButton("Skip", executor) { dialog, _ ->
-                    viewModel.getArticles(getString(R.string.api_token), source)
+                    viewModel.getArticles(this, getString(R.string.api_token), source)
                 }
                 .build()
 
@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
 
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
-                    viewModel.getArticles(getString(R.string.api_token), source)
+                    viewModel.getArticles(this@MainActivity, getString(R.string.api_token), source)
                 }
 
                 override fun onAuthenticationFailed() {
@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                 }
             })
         } else {
-            viewModel.getArticles(getString(R.string.api_token), source)
+            viewModel.getArticles(this, getString(R.string.api_token), source)
         }
 
         setContent {

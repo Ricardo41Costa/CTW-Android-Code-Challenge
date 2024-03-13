@@ -1,5 +1,7 @@
 package com.example.ctwchallenge.state
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,7 +16,13 @@ import com.example.ctwchallenge.data.Article
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.awaitResponse
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileWriter
 import java.io.IOException
+import java.net.URL
+import java.util.Date
+
 sealed interface UiState {
     data class Success(val articles: ArrayList<Article>) : UiState
     object Error : UiState
@@ -53,22 +61,30 @@ class ArticleViewModel : ViewModel() {
         }
     }*/
 
-    fun getArticles(token: String, source: String) {
+    fun getArticles(context: Context, token: String, source: String) {
         viewModelScope.launch {
             uiState = UiState.Loading
             uiState = try {
+
                 val call = ApiClient.apiManager.getTopHeadlines(token, source)
                 val response = call.awaitResponse()
                 val responseBody = response.body()
                 val articles = responseBody!!.articles
 
-                /*for (article in articles) {
+                for (article in articles) {
                     if (article.urlToImage != null) {
-                        val url = URL("https://www.example.com/image.png")
-                        val imageData = url.readBytes()
-
+                        try {
+                            val url = URL(article.urlToImage)
+                            val imageData = url.readBytes()
+                            val file = File(context.cacheDir, Date().toString() + ".png")
+                            file.createNewFile()
+                            file.writeBytes(imageData)
+                            article.pathToImage = file.absolutePath
+                        } catch (e : Exception) {
+                            Log.wtf("getArticles", e.toString())
+                        }
                     }
-                }*/
+                }
 
                 UiState.Success(
                     articles

@@ -28,8 +28,7 @@ import com.example.ctwchallenge.ui.theme.CTWChallengeTheme
 
 @Composable
 fun ArticleScreen(context: Context, article: Article, modifier: Modifier) {
-    val image: Painter = painterResource(R.drawable.bbc_placeholder)
-    if (article.pathToImage == null) {
+    val image: Painter = if (article.pathToImage == null) {
         if (context.packageName.contains("bbc")) {
             painterResource(R.drawable.bbc_placeholder)
         } else {

@@ -9,6 +9,8 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,6 +24,7 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -75,12 +78,17 @@ fun HomeScreen(context : Context, articles : List<Article>, modifier: Modifier) 
                     intent.putExtras(bundle)
 
                     startActivity(context, intent, null)
-                }
+                },
+                modifier = modifier
+                    .height(200.dp)
             ) {
                 Box(modifier.padding(8.dp), contentAlignment = Alignment.BottomStart) {
                     Image(
                         painter = image,
-                        contentDescription = null
+                        contentDescription = null,
+                        contentScale = ContentScale.FillWidth,
+                        modifier = modifier
+                            .fillMaxWidth()
                     )
                     Column(modifier.padding(8.dp)) {
                         Text(
