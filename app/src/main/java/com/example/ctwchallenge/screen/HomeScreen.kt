@@ -30,6 +30,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
+import coil.compose.AsyncImage
 import com.example.ctwchallenge.R
 import com.example.ctwchallenge.activity.DetailActivity
 import com.example.ctwchallenge.data.Article
@@ -52,15 +53,7 @@ fun getDateTime(iso: String): String {
 fun HomeScreen(context : Context, articles : List<Article>, modifier: Modifier) {
     LazyColumn {
         items(articles) { article ->
-            val image: Painter = if (article.pathToImage == null) {
-                if (context.packageName.contains("bbc")) {
-                    painterResource(R.drawable.bbc_placeholder);
-                } else {
-                    painterResource(R.drawable.abc_placeholder);
-                }
-            } else {
-                BitmapPainter(BitmapFactory.decodeFile(article.pathToImage).asImageBitmap())
-            }
+            val usePlaceholder: Boolean = article.urlToImage == null
 
             Surface(
                 onClick = {
@@ -72,7 +65,6 @@ fun HomeScreen(context : Context, articles : List<Article>, modifier: Modifier) 
                     bundle.putString("urlToImage", article.urlToImage)
                     bundle.putString("publishedAt", article.publishedAt)
                     bundle.putString("content", article.content)
-                    bundle.putString("pathToImage", article.pathToImage)
 
                     val intent = Intent(context, DetailActivity::class.java)
                     intent.putExtras(bundle)
@@ -83,13 +75,23 @@ fun HomeScreen(context : Context, articles : List<Article>, modifier: Modifier) 
                     .height(200.dp)
             ) {
                 Box(modifier.padding(8.dp), contentAlignment = Alignment.BottomStart) {
-                    Image(
-                        painter = image,
-                        contentDescription = null,
-                        contentScale = ContentScale.FillWidth,
-                        modifier = modifier
-                            .fillMaxWidth()
-                    )
+                    if (usePlaceholder) {
+                        Image(
+                            painter = if (context.packageName.contains("bbc")) painterResource(R.drawable.bbc_placeholder) else painterResource(R.drawable.abc_placeholder),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillWidth,
+                            modifier = modifier
+                                .fillMaxWidth()
+                        )
+                    } else {
+                        AsyncImage(
+                            model = article.urlToImage,
+                            contentDescription = null,
+                            contentScale = ContentScale.FillWidth,
+                            modifier = modifier
+                                .fillMaxWidth()
+                        )
+                    }
                     Column(modifier.padding(8.dp)) {
                         Text(
                             text = article.title,
@@ -99,7 +101,7 @@ fun HomeScreen(context : Context, articles : List<Article>, modifier: Modifier) 
                             style = TextStyle(
                                 fontSize = 20.sp,
                                 shadow = Shadow(
-                                    color = Color.Black, blurRadius = 15f
+                                    color = Color.Black, blurRadius = 20f
                                 )
                             )
                         )
@@ -107,9 +109,9 @@ fun HomeScreen(context : Context, articles : List<Article>, modifier: Modifier) 
                             text = getDateTime(article.publishedAt),
                             color = Color.White,
                             style = TextStyle(
-                                fontSize = 12.sp,
+                                fontSize = 16.sp,
                                 shadow = Shadow(
-                                    color = Color.Black, blurRadius = 15f
+                                    color = Color.Black, blurRadius = 20f
                                 )
                             )
                         )

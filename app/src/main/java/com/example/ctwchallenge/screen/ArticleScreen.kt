@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.ctwchallenge.R
 import com.example.ctwchallenge.data.Article
 import com.example.ctwchallenge.state.ArticleViewModel
@@ -28,25 +29,26 @@ import com.example.ctwchallenge.ui.theme.CTWChallengeTheme
 
 @Composable
 fun ArticleScreen(context: Context, article: Article, modifier: Modifier) {
-    val image: Painter = if (article.pathToImage == null) {
-        if (context.packageName.contains("bbc")) {
-            painterResource(R.drawable.bbc_placeholder)
-        } else {
-            painterResource(R.drawable.abc_placeholder)
-        }
-    } else {
-        BitmapPainter(BitmapFactory.decodeFile(article.pathToImage).asImageBitmap())
-    }
+    val usePlaceholder: Boolean = article.urlToImage == null
+
     Column {
-        Image(
-            painter = image,
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth,
-            modifier = modifier
-                .padding(top = 4.dp)
-                .fillMaxWidth()
-                .height(200.dp)
-        )
+        if (usePlaceholder) {
+            Image(
+                painter = if (context.packageName.contains("bbc")) painterResource(R.drawable.bbc_placeholder) else painterResource(R.drawable.abc_placeholder),
+                contentDescription = null,
+                contentScale = ContentScale.FillWidth,
+                modifier = modifier
+                    .fillMaxWidth()
+            )
+        } else {
+            AsyncImage(
+                model = article.urlToImage,
+                contentDescription = null,
+                contentScale = ContentScale.FillWidth,
+                modifier = modifier
+                    .fillMaxWidth()
+            )
+        }
         Text(
             text = article.title,
             fontSize = 24.sp,

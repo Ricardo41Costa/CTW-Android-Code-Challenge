@@ -47,8 +47,7 @@ class DetailActivity : ComponentActivity() {
                             bundle.getString("url", ""),
                             bundle.getString("urlToImage"),
                             bundle.getString("publishedAt", ""),
-                            bundle.getString("content"),
-                            bundle.getString("pathToImage"))
+                            bundle.getString("content"))
 
                         ArticleScreen(this, article, Modifier)
                     }

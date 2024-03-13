@@ -6,19 +6,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
-import com.example.ctwchallenge.R
 import com.example.ctwchallenge.api.ApiClient
 import com.example.ctwchallenge.data.Article
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.awaitResponse
-import java.io.BufferedWriter
 import java.io.File
-import java.io.FileWriter
 import java.io.IOException
 import java.net.URL
 import java.util.Date
@@ -71,7 +65,7 @@ class ArticleViewModel : ViewModel() {
                 val responseBody = response.body()
                 val articles = responseBody!!.articles
 
-                for (article in articles) {
+                /*for (article in articles) {
                     if (article.urlToImage != null) {
                         try {
                             val url = URL(article.urlToImage)
@@ -84,7 +78,7 @@ class ArticleViewModel : ViewModel() {
                             Log.wtf("getArticles", e.toString())
                         }
                     }
-                }
+                }*/
 
                 UiState.Success(
                     articles
